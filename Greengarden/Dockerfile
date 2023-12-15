@@ -1,11 +1,11 @@
-# Utilisez une image de base
-FROM php:7.4-apache
+#utilisons une image PHP apache
+FROM php:apache
 
-# Copiez le code source dans le conteneur
+#copy de toute l'appl dans le répertoire du travail du conteneur
 COPY . /var/www/html
 
-# Exposez le port 80 pour le serveur web
-EXPOSE 80
+#copy de l'env prod en le renommant en env
+COPY .env.prod /var/www/html/.env
 
-# Commande pour démarrer le serveur Apache
-CMD ["apache2-foreground"]
+# installons les dépendances de PDO pour MySQL
+RUN docker-php-ext-install pdo pdo_mysql
