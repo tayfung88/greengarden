@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $login = $_POST['login'];
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
-    // Spécifier manuellement Id_UserType à 1 pour les clients
+    // Id_UserType à 1 pour les clients
     $userType = 1;
 
     // Insérer les données dans la base de données
