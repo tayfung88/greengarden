@@ -4,45 +4,6 @@ require_once("dao.php");
 $dao = new DAO();
 $dao->connexion();
 
-// Traitement de l'ajout d'un produit
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajouter'])) {
-    $nomCourt = $_POST['nom_court'];
-    $nomLong = $_POST['nom_long'];
-    $refFournisseur = $_POST['ref_fournisseur'];
-    $photo = $_POST['photo']; 
-    $prixAchat = $_POST['prix_achat'];
-    $categorieId = $_POST['categorie_id'];
-
-    // Ajout du produit
-    $stmt = $dao->bdd->prepare("INSERT INTO t_d_produit (Nom_court, Nom_Long, Ref_fournisseur, Photo, Prix_Achat, Id_Categorie) VALUES (?, ?, ?, ?, ?, ?)");
-    $stmt->execute([$nomCourt, $nomLong, $refFournisseur, $photo, $prixAchat, $categorieId]);
-}
-
-// Traitement de la modification d'un produit
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['modifier'])) {
-    $productId = $_POST['produit_id'];
-    $nomCourt = $_POST['nom_court'];
-    $nomLong = $_POST['nom_long'];
-    $refFournisseur = $_POST['ref_fournisseur'];
-    $photo = $_POST['photo']; 
-    $prixAchat = $_POST['prix_achat'];
-    $categorieId = $_POST['categorie_id'];
-
-    // Modification du produit
-    $stmt = $dao->bdd->prepare("UPDATE t_d_produit SET Nom_court = ?, Nom_long = ?, Ref_fournisseur = ?, Photo = ?, Prix_Achat = ?, Id_Categorie = ? WHERE Id_Produit = ?");
-    $stmt->execute([$nomCourt, $nomLong, $refFournisseur, $photo, $prixAchat, $categorieId, $productId]);
-}
-
-// Traitement de la suppression d'un produit
-if (isset($_GET['action']) && $_GET['action'] === 'supprimer' && isset($_GET['id'])) {
-    $productId = $_GET['id'];
-
-    // Suppression du produit
-    $stmt = $dao->bdd->prepare("DELETE FROM t_d_produit WHERE Id_Produit = ?");
-    $stmt->execute([$productId]);
-}
-
-// Récupération de la liste des produits
 $stmt = $dao->bdd->prepare("SELECT * FROM t_d_produit");
 $stmt->execute();
 $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -91,7 +52,7 @@ $dao->disconnect();
             <h2>Gestion des Produits</h2>
 
             <!-- Formulaire d'ajout de produit -->
-            <form method="post" action="crud.php">
+            <form method="post" action="ajouter.php">
                 <h3>Ajouter un Produit</h3>
                 <label for="nom_court">Nom Court :</label>
                 <input type="text" name="nom_court" required>
@@ -131,8 +92,8 @@ $dao->disconnect();
                             <td><?= $product['Prix_Achat'] ?></td>
                             <td><?= $product['Id_Categorie'] ?></td>
                             <td>
-                                <a href="crud.php?action=modifier&id=<?= $product['Id_Produit'] ?>">Modifier</a>
-                                <a href="crud.php?action=supprimer&id=<?= $product['Id_Produit'] ?>" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')">Supprimer</a>
+                                <a href="modifier.php?action=modifier&id=<?= $product['Id_Produit'] ?>">Modifier</a>
+                                <a href="supprimer.php?action=supprimer&id=<?= $product['Id_Produit'] ?>" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')">Supprimer</a>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -147,7 +108,7 @@ $dao->disconnect();
                 $stmt->execute([$productId]);
                 $product = $stmt->fetch(PDO::FETCH_ASSOC);
             ?>
-            <form method="post" action="crud.php">
+            <form method="post" action="modifier.php">
                 <h3>Modifier le Produit</h3>
                 <input type="hidden" name="produit_id" value="<?= $productId ?>">
                 <label for="nom_court">Nom Court :</label>
